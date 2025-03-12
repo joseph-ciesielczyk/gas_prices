@@ -25,8 +25,17 @@ user_agent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 url = 'https://www.gasbuddy.com/gasprices/ohio/cleveland'
 base_url = 'https://www.gasbuddy.com/'
 
-price_class = 'text__xl___2MXGo text__left___1iOw3 StationDisplayPrice-module__price___3rARL'
+# classes for information
+price_box_main_class = 'GenericStationListItem-module__stationListItem___3Jmni'
+price_box_class = 'Belt__childContainer___PJhvi'
+price_box_rating = ''
+price_box_address = ''
+price_box_city_state = ''
+price_box_money = 'text__xl___2MXGo text__left___1iOw3 StationDisplayPrice-module__price___3rARL'
+price_box_time = 'ReportedBy-module__postedTime___J5H9Z'
+price_box_money_type = 'text__left___1iOw3 StationDisplayPrice-module__cashTag___14vFI'
 
+# how to seem like a real boy
 headers = {
     'User-Agent': user_agent
 }
@@ -37,6 +46,7 @@ try:
 
     soup = BeautifulSoup(r.content, 'html.parser')
 
+    # handy reference for later usage
     links = []
 
     for link in soup.find_all('a'):
@@ -52,5 +62,49 @@ try:
             for link in links:
                 f.write(base_url + str(link) + '\n')
 
+    # price box component lists            
+    price_box_station_name_list = []
+    price_box_rating_list = []
+    price_box_address_list = []
+    price_box_city_state_list = []    
+    price_box_money_list = []
+    price_box_time_list = []
+    price_box_money_type_list = []
+    price_box_info = []
+    
+    # price box information, top class container
+    # needs other elements
+    for item in soup.find_all(class_='StationDisplayPrice-module__borderContainer___FfIQJ StationDisplayPrice-module__bordered___ExChJ'):
+        a = item.find(class_=price_box_money)
+        b = item.find(class_=price_box_time)
+        c = item.find(class_=price_box_money_type)
+        d = item.find('a')
+        e = ''
+        f = ''
+        g = ''
+         
+        if a:
+            price_box_money_list.append(a.text)
+        else:
+            price_box_money_list.append('N/A')
+        if b:
+            price_box_time_list.append(b.text)
+        else:
+            price_box_time_list.append('N/A')
+        if c:
+            price_box_money_type_list.append(c.text)
+        else:
+            price_box_money_type_list.append('N/A')
+        
+    for i in range(len(price_box_money_list) - 1):
+        new_set = list((price_box_money_list[i], price_box_time_list[i], price_box_money_type_list[i]))
+        price_box_info.append(new_set) 
+       
+    # sorts list, low to high
+    price_box_info.sort(key=lambda x: x[0])    
+    for item in price_box_info:
+        print('Price: {:>4} Time: {:>15} Money Type: {:>6}'.format(item[0], item[1], item[2]))
+
+# catches failed response
 except requests.exceptions.RequestException as e:
     print(f'Error during request: {e}')
