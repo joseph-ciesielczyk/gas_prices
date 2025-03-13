@@ -28,6 +28,7 @@ base_url = 'https://www.gasbuddy.com/'
 # classes for information
 price_box_main_class = 'GenericStationListItem-module__stationListItem___3Jmni'
 price_box_class = 'Belt__childContainer___PJhvi'
+price_box_station_name = 'a' # station name in a href tag 
 price_box_rating = ''
 price_box_address = ''
 price_box_city_state = ''
@@ -78,11 +79,7 @@ try:
         a = item.find(class_=price_box_money)
         b = item.find(class_=price_box_time)
         c = item.find(class_=price_box_money_type)
-        d = item.find('a')
-        e = ''
-        f = ''
-        g = ''
-         
+    
         if a:
             price_box_money_list.append(a.text)
         else:
@@ -95,15 +92,32 @@ try:
             price_box_money_type_list.append(c.text)
         else:
             price_box_money_type_list.append('N/A')
+    
+    for item in soup.find_all(class_='GenericStationListItem-module__stationListItem___3Jmn4'):
+        d = item.find(price_box_station_name)
+        e = ''
+        f = ''
+        g = ''
         
+        if d:
+            price_box_station_name_list.append(d.text)
+        else:
+            price_box_station_name_list.append('N/A')
+         
     for i in range(len(price_box_money_list) - 1):
-        new_set = list((price_box_money_list[i], price_box_time_list[i], price_box_money_type_list[i]))
+        new_set = list((
+            price_box_station_name_list[i],
+            price_box_money_list[i], 
+            price_box_time_list[i], 
+            price_box_money_type_list[i]
+            ))
         price_box_info.append(new_set) 
        
     # sorts list, low to high
-    price_box_info.sort(key=lambda x: x[0])    
+    price_box_info.sort(key=lambda x: x[0])
+        
     for item in price_box_info:
-        print('Price: {:>4} Time: {:>15} Money Type: {:>6}'.format(item[0], item[1], item[2]))
+        print('Vendor: {:<12}\tPrice: {:^4}\tTime: {:<10}\tMoney Type: {:>10}'.format(item[0], item[1], item[2], item[3]))
 
 # catches failed response
 except requests.exceptions.RequestException as e:
