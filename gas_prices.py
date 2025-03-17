@@ -144,7 +144,6 @@ def main():
 parser = argparse.ArgumentParser()
 parser.add_argument('-l', help='Likns file creation', action='store_true')
 parser.add_argument('-o', help='Output folder creation', action='store_true')
-parser.add_argument('-m', help='Main function', action='store_true')
 args = parser.parse_args()
 
 if args.o:
@@ -155,6 +154,4 @@ if args.l and output_save == True:
     links_save = True
     file_create()
 
-if args.m:
-    main()
-
+main()
