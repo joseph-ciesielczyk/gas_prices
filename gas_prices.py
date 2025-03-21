@@ -4,6 +4,11 @@ from pathlib import Path
 import os
 import argparse
 
+from tkinter import *
+from tkinter import ttk
+
+import sv_ttk
+
 # city and state input for url
 state_input = input('Please enter state: ')
 city_input = input('Please enter city: ')
@@ -131,10 +136,41 @@ def main():
            
         # sorts list, low to high
         price_box_info.sort(key=lambda x: x[0])
-            
-        for item in price_box_info:
-            print('Vendor: {:<12}\tPrice: {:^4}\tTime: {:<10}\tMoney Type: {:>10}'.format(item[0], item[1], item[2], item[3]))
-    
+
+        root = Tk()
+        root.title("Gas Prices")
+        
+        mainframe = ttk.Frame(root, padding="3 3 12 12")
+        mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
+        root.columnconfigure(0, weight=1)
+        root.rowconfigure(0, weight=1)
+      
+        row_count = 0
+        for item in price_box_station_name_list:
+            ttk.Label(mainframe, text=item).grid(column=0, row=row_count, sticky=(W, E))
+            row_count += 1
+        
+        row_count = 0
+        for item in price_box_money_list:
+            ttk.Label(mainframe, text=item).grid(column=1, row=row_count, sticky=(W, E))
+            row_count += 1
+
+        row_count = 0
+        for item in price_box_time_list:
+            ttk.Label(mainframe, text=item).grid(column=2, row=row_count, sticky=(W, E))
+            row_count += 1
+
+        row_count = 0
+        for item in price_box_money_type_list:
+            ttk.Label(mainframe, text=item).grid(column=3, row=row_count, sticky=(W, E))
+            row_count += 1
+
+        for child in mainframe.winfo_children():
+            child.grid_configure(padx=5, pady=5)
+        
+        sv_ttk.set_theme("dark")
+        
+        root.mainloop()
     # catches failed response
     except requests.exceptions.RequestException as e:
         print(f'Error during request: {e}')
@@ -155,3 +191,4 @@ if args.l and output_save == True:
     file_create()
 
 main()
+
